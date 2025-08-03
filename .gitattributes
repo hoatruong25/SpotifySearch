@@ -1,0 +1,7 @@
+*.cs text eol=lf
+*.csv text eol=lf
+*.yml text eol=lf
+*.json text eol=lf
+
+*.png binary
+*.jpg binary

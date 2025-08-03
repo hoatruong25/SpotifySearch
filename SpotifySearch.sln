@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpotifySearchAPI", "SpotifySearchAPI\SpotifySearchAPI.csproj", "{A8CAF0FE-2F9A-4BC3-84D4-E37D9CE2830E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpotifySearch.API", "SpotifySearch.API\SpotifySearch.API.csproj", "{A8CAF0FE-2F9A-4BC3-84D4-E37D9CE2830E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1A4397D3-687D-4509-BDBD-3D8271963962}"
 	ProjectSection(SolutionItems) = preProject
