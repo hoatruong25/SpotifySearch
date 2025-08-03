@@ -1,25 +1,21 @@
 using System.Globalization;
 using CsvHelper;
 using SpotifySearchAPI.Model;
+using SpotifySearchAPI.Repository;
 
 namespace SpotifySearchAPI.BusinessService.LoadDataService;
 
 public class LoadDataService : ILoadDataService
 {
+    private readonly ISpotifyTrackRepository _spotifyTrackRepository;
+
+    public LoadDataService(ISpotifyTrackRepository spotifyTrackRepository)
+    {
+        _spotifyTrackRepository = spotifyTrackRepository;
+    }
+
     public async Task IndexDataFromCsvAsync(CancellationToken cancellation)
     {
-        var data = new List<SpotifyTrack>();
-        try
-        {
-            using (var streamReader = new StreamReader("data.csv"))
-            using (var csv = new CsvReader(streamReader, CultureInfo.InvariantCulture))
-            {
-                data = csv.GetRecords<SpotifyTrack>().ToList();
-            }
-        }
-        catch (Exception e)
-        {
-            
-        }
+        var data = _spotifyTrackRepository.GetSpotifyTrack();
     }
 }
