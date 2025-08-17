@@ -1,0 +1,23 @@
+{
+  "index_patterns": ["spotify-plays-*"],
+  "data_stream": {},
+  "template": {
+    "settings": {
+      "index.lifecycle.name": "spotify-plays-policy",
+      "index.routing.allocation.include._tier_preference": "data_hot",
+      "index.refresh_interval": "5s"
+    },
+    "mappings": {
+      "properties": {
+        "@timestamp": { "type": "date" },
+        "track_id":   { "type": "keyword" },
+        "user_id":    { "type": "keyword" },
+        "duration_ms":{ "type": "integer" },
+        "played_ms":  { "type": "date" },         // nếu khác @timestamp
+        "cover_id":   { "type": "keyword" },      // chỉ lưu id/url
+        "country":    { "type": "keyword" }
+      }
+    }
+  },
+  "priority": 500
+}

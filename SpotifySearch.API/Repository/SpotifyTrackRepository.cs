@@ -6,11 +6,11 @@ namespace SpotifySearchAPI.Repository;
 
 public class SpotifyTrackRepository : ISpotifyTrackRepository
 {
-    public List<SpotifyTrack> GetSpotifyTrack()
+    public List<SpotifyPlayRaw> GetSpotifyTrack()
     {
         using var streamReader = new StreamReader("Dataset/spotify_history.csv");
         using var csv = new CsvReader(streamReader, CultureInfo.InvariantCulture);
 
-        return csv.GetRecords<SpotifyTrack>().ToList();
+        return csv.GetRecords<SpotifyPlayRaw>().ToList();
     }
 }
