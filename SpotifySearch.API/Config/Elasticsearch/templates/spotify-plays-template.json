@@ -1,23 +1,69 @@
 {
-  "index_patterns": ["spotify-plays-*"],
-  "data_stream": {},
+  "priority": 100,
   "template": {
     "settings": {
-      "index.lifecycle.name": "spotify-plays-policy",
-      "index.routing.allocation.include._tier_preference": "data_hot",
-      "index.refresh_interval": "5s"
+      "index": {
+        "lifecycle": {
+          "name": "spotify-plays-policy"
+        },
+        "mode": "standard",
+        "routing": {
+          "allocation": {
+            "include": {
+              "_tier_preference": "data_hot"
+            }
+          }
+        },
+        "refresh_interval": "5s",
+        "number_of_shards": "3",
+        "number_of_replicas": "1"
+      }
     },
     "mappings": {
       "properties": {
-        "@timestamp": { "type": "date" },
-        "track_id":   { "type": "keyword" },
-        "user_id":    { "type": "keyword" },
-        "duration_ms":{ "type": "integer" },
-        "played_ms":  { "type": "date" },         // nếu khác @timestamp
-        "cover_id":   { "type": "keyword" },      // chỉ lưu id/url
-        "country":    { "type": "keyword" }
+        "@timestamp": {
+          "type": "date"
+        },
+        "artist_name": {
+          "type": "text"
+        },
+        "ms_played": {
+          "type": "integer"
+        },
+        "spotify_track_uri": {
+          "type": "keyword"
+        },
+        "album_name": {
+          "type": "text"
+        },
+        "reason_end": {
+          "type": "keyword"
+        },
+        "reason_start": {
+          "type": "keyword"
+        },
+        "shuffle": {
+          "type": "boolean"
+        },
+        "platform": {
+          "type": "keyword"
+        },
+        "skipped": {
+          "type": "boolean"
+        },
+        "track_name": {
+          "type": "text"
+        }
       }
     }
   },
-  "priority": 500
+  "index_patterns": [
+    "spotify-plays*"
+  ],
+  "data_stream": {
+    "hidden": false,
+    "allow_custom_routing": false
+  },
+  "composed_of": [],
+  "ignore_missing_component_templates": []
 }

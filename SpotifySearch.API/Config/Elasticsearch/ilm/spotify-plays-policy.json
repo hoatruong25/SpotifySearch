@@ -2,34 +2,44 @@
   "policy": {
     "phases": {
       "hot": {
+        "min_age": "0ms",
         "actions": {
           "rollover": {
-            "max_primary_shard_size": "30gb",
-            "max_age": "7d"
+            "max_age": "15m",
+            "max_primary_shard_docs": 100,
+            "max_size": "1gb",
+            "max_primary_shard_size": "10mb"
           },
-          "set_priority": { "priority": 100 }
+          "set_priority": {
+            "priority": 100
+          },
+          "shrink": {
+            "number_of_shards": 1,
+            "allow_write_after_shrink": false
+          }
         }
       },
       "warm": {
-        "min_age": "7d",
+        "min_age": "30m",
         "actions": {
-          "allocate": { "tier": "warm" },
-          "shrink": { "number_of_shards": 1 },
-          "forcemerge": { "max_num_segments": 1 },
-          "set_priority": { "priority": 50 }
+          "set_priority": {
+            "priority": 50
+          },
+          "allocate": {
+            "number_of_replicas": 0
+          }
         }
       },
       "cold": {
-        "min_age": "90d",
+        "min_age": "1h",
         "actions": {
-          "allocate": { "tier": "cold" },
-          "set_priority": { "priority": 25 }
-          /* "searchable_snapshot": { "snapshot_repository": "found-snapshots" } */
+          "set_priority": {
+            "priority": 0
+          },
+          "allocate": {
+            "number_of_replicas": 0
+          }
         }
-      },
-      "delete": {
-        "min_age": "365d",
-        "actions": { "delete": {} }
       }
     }
   }
