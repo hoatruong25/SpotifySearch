@@ -1,36 +1,29 @@
 using SpotifySearchAPI.BusinessService.ElasticsearchService;
-using SpotifySearchAPI.BusinessService.NormalizerService;
 using SpotifySearchAPI.Repository;
-using SpotifySearchAPI.Model;
 
 namespace SpotifySearchAPI.BusinessService.SpotifyIngestService;
 
-public class SpotifyIngestService : ISpotifyIngestService
+public class SpotifyService : ISpotifyService
 {
     private readonly ISpotifyTrackRepository _spotifyTrackRepository;
-    private readonly INormalizerService _normalizerService;
     private readonly IElasticSearchService _elasticSearchService;
     private const int BatchSize = 50; // Số lượng documents mỗi batch
 
-    public SpotifyIngestService(ISpotifyTrackRepository spotifyTrackRepository, INormalizerService normalizerService, IElasticSearchService elasticSearchService)
+    public SpotifyService(ISpotifyTrackRepository spotifyTrackRepository, IElasticSearchService elasticSearchService)
     {
         _spotifyTrackRepository = spotifyTrackRepository;
-        _normalizerService = normalizerService;
         _elasticSearchService = elasticSearchService;
     }
 
-    public async Task<bool> BulkAsync(CancellationToken cancellationToken)
+    public async Task<bool> BulkAsync(string index, CancellationToken cancellationToken)
     {
         try
         {
             var spotifyPlays = _spotifyTrackRepository.GetSpotifyTrack();
-            var spotifyPlayNormalized = _normalizerService.NormalizeMany(spotifyPlays);
             
-            var batches = spotifyPlayNormalized
+            var batches = spotifyPlays
                 .Chunk(BatchSize)
                 .ToList();
-
-            Console.WriteLine($"Starting bulk operation with {spotifyPlayNormalized.Count} documents in {batches.Count} batches");
 
             var result = true;
             var totalProcessed = 0;
@@ -38,7 +31,7 @@ public class SpotifyIngestService : ISpotifyIngestService
             
             foreach (var batch in batches)
             {
-                var bulkResponse = await _elasticSearchService.IndexDocumentsAsync(batch, "spotify_plays", cancellationToken);
+                var bulkResponse = await _elasticSearchService.IndexDocumentsAsync(batch, index, cancellationToken);
                 
                 if (bulkResponse)
                 {

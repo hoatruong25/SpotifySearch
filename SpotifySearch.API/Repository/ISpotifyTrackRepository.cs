@@ -4,5 +4,5 @@ namespace SpotifySearchAPI.Repository;
 
 public interface ISpotifyTrackRepository
 {
-    List<SpotifyPlayRaw> GetSpotifyTrack();
+    List<SpotifyPlay> GetSpotifyTrack();
 }

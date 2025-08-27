@@ -1,3 +1,4 @@
+
 using Elastic.Clients.Elasticsearch;
 using Elastic.Clients.Elasticsearch.Core.Bulk;
 
@@ -33,8 +34,9 @@ public class ElasticSearchService : IElasticSearchService
         }
     }
     
-    public async Task InsertDocumentAsync<T>(T document, string indexName, CancellationToken cancellation) where T : class
+    public async Task<bool> InsertDocumentAsync<T>(T document, string indexName, CancellationToken cancellation) where T : class
     {
-        await _es.IndexAsync(document, idx => idx.Index(indexName), cancellation);
+        var result = await _es.IndexAsync(document, idx => idx.Index(indexName), cancellation);
+        return result.IsSuccess();
     }
 }
