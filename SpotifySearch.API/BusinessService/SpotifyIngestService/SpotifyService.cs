@@ -1,4 +1,6 @@
+using Elastic.Clients.Elasticsearch;
 using SpotifySearchAPI.BusinessService.ElasticsearchService;
+using SpotifySearchAPI.Model;
 using SpotifySearchAPI.Repository;
 
 namespace SpotifySearchAPI.BusinessService.SpotifyIngestService;
@@ -6,13 +8,15 @@ namespace SpotifySearchAPI.BusinessService.SpotifyIngestService;
 public class SpotifyService : ISpotifyService
 {
     private readonly ISpotifyTrackRepository _spotifyTrackRepository;
-    private readonly IElasticSearchService _elasticSearchService;
+    private readonly IElasticsearchService _elasticsearchService;
+    private readonly ElasticsearchClient _es;
     private const int BatchSize = 50; // Số lượng documents mỗi batch
 
-    public SpotifyService(ISpotifyTrackRepository spotifyTrackRepository, IElasticSearchService elasticSearchService)
+    public SpotifyService(ISpotifyTrackRepository spotifyTrackRepository, IElasticsearchService elasticsearchService, ElasticsearchClient es)
     {
         _spotifyTrackRepository = spotifyTrackRepository;
-        _elasticSearchService = elasticSearchService;
+        _elasticsearchService = elasticsearchService;
+        _es = es;
     }
 
     public async Task<bool> BulkAsync(string index, CancellationToken cancellationToken)
@@ -31,7 +35,7 @@ public class SpotifyService : ISpotifyService
             
             foreach (var batch in batches)
             {
-                var bulkResponse = await _elasticSearchService.IndexDocumentsAsync(batch, index, cancellationToken);
+                var bulkResponse = await _elasticsearchService.IndexDocumentsAsync(batch, index, cancellationToken);
                 
                 if (bulkResponse)
                 {
@@ -55,5 +59,19 @@ public class SpotifyService : ISpotifyService
             Console.WriteLine($"Error during bulk operation: {ex.Message}");
             throw;
         }
+    }
+    
+    public async Task<List<SpotifyPlay>> SearchFullTextAsync(string indexName, string fieldName, string query, int size, CancellationToken cancellation)
+    {
+        var res = await _es.SearchAsync<SpotifyPlay>(s => s
+            .Indices(indexName)
+            .Query(q => q.Match(m => m
+                .Field(ff => ff.TrackName)
+                .Query(query)
+                .Fuzziness("AUTO")
+            ))
+            .Size(size), cancellation);
+
+        return res.Documents.ToList();
     }
 }
