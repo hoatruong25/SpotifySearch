@@ -21,4 +21,9 @@
         </Content>
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Config\Elasticsearch\spotify\" />
+      <Folder Include="Dataset\uber\" />
+    </ItemGroup>
+
 </Project>
