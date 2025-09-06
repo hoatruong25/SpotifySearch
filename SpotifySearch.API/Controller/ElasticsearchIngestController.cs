@@ -31,13 +31,4 @@ public class ElasticsearchIngestController : ControllerBase
         var result = await _spotifyService.BulkAsync(index, cancellation);
         return result ? Ok() : StatusCode(500, "Failed to bulk insert documents");
     }
-
-    [HttpGet("search/{index}")]
-    public async Task<IActionResult> SearchFullTextAsync(string index, string fieldName, string query, int size,
-        CancellationToken cancellation)
-    {
-        // var result = await _elasticSearchService.SearchFullTextAsync<SpotifyPlay>(index, fieldName, query, size, cancellation);
-        var result = await _spotifyService.SearchFullTextAsync(index, fieldName, query, size, cancellation);
-        return result.Any() ? Ok(result) : StatusCode(500, "No results found");
-    }
 }

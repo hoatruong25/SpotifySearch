@@ -1,6 +1,5 @@
 using Elastic.Clients.Elasticsearch;
 using SpotifySearchAPI.BusinessService.ElasticsearchService;
-using SpotifySearchAPI.Model;
 using SpotifySearchAPI.Repository;
 
 namespace SpotifySearchAPI.BusinessService.SpotifyIngestService;
@@ -59,19 +58,5 @@ public class SpotifyService : ISpotifyService
             Console.WriteLine($"Error during bulk operation: {ex.Message}");
             throw;
         }
-    }
-    
-    public async Task<List<SpotifyPlay>> SearchFullTextAsync(string indexName, string fieldName, string query, int size, CancellationToken cancellation)
-    {
-        var res = await _es.SearchAsync<SpotifyPlay>(s => s
-            .Indices(indexName)
-            .Query(q => q.Match(m => m
-                .Field(ff => ff.TrackName)
-                .Query(query)
-                .Fuzziness("AUTO")
-            ))
-            .Size(size), cancellation);
-
-        return res.Documents.ToList();
     }
 }
