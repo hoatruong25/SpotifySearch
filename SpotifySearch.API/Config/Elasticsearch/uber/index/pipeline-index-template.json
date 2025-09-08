@@ -6,7 +6,7 @@
       "date": {
         "field": "raw_datetime",
         "target_field": "@timestamp",
-        "formats": ["dd/MM/yyyy HH:mm:ss"]
+        "formats": ["yyyy/MM/dd HH:mm:ss"]
       }
     },
     { "remove": { "field": ["Date","Time","raw_datetime"], "ignore_missing": true } },

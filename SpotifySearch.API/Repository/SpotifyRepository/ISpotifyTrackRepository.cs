@@ -1,6 +1,6 @@
 using SpotifySearchAPI.Model;
 
-namespace SpotifySearchAPI.Repository;
+namespace SpotifySearchAPI.Repository.SpotifyRepository;
 
 public interface ISpotifyTrackRepository
 {

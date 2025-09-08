@@ -1,4 +1,4 @@
-PUT normal-index-for-test
+//PUT normal-index-for-test
 {
   "settings": {
     "index.number_of_shards": 3,

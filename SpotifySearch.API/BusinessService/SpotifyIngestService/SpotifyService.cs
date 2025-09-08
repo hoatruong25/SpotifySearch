@@ -1,6 +1,6 @@
-using Elastic.Clients.Elasticsearch;
 using SpotifySearchAPI.BusinessService.ElasticsearchService;
 using SpotifySearchAPI.Repository;
+using SpotifySearchAPI.Repository.SpotifyRepository;
 
 namespace SpotifySearchAPI.BusinessService.SpotifyIngestService;
 
@@ -8,14 +8,12 @@ public class SpotifyService : ISpotifyService
 {
     private readonly ISpotifyTrackRepository _spotifyTrackRepository;
     private readonly IElasticsearchService _elasticsearchService;
-    private readonly ElasticsearchClient _es;
     private const int BatchSize = 50; // Số lượng documents mỗi batch
 
-    public SpotifyService(ISpotifyTrackRepository spotifyTrackRepository, IElasticsearchService elasticsearchService, ElasticsearchClient es)
+    public SpotifyService(ISpotifyTrackRepository spotifyTrackRepository, IElasticsearchService elasticsearchService)
     {
         _spotifyTrackRepository = spotifyTrackRepository;
         _elasticsearchService = elasticsearchService;
-        _es = es;
     }
 
     public async Task<bool> BulkAsync(string index, CancellationToken cancellationToken)
