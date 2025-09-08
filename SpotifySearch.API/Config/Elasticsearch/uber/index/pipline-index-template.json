@@ -1,0 +1,99 @@
+//PUT _ingest/pipeline/ride-bookings-pipeline
+{
+  "processors": [
+    { "set": { "field": "raw_datetime", "value": "{{Date}} {{Time}}" } },
+    {
+      "date": {
+        "field": "raw_datetime",
+        "target_field": "@timestamp",
+        "formats": ["dd/MM/yyyy HH:mm:ss"]
+      }
+    },
+    { "remove": { "field": ["Date","Time","raw_datetime"], "ignore_missing": true } },
+
+    { "rename": { "field": "Booking ID", "target_field": "booking_id", "ignore_missing": true } },
+    { "rename": { "field": "Booking Status", "target_field": "booking_status", "ignore_missing": true } },
+    { "rename": { "field": "Customer ID", "target_field": "customer_id", "ignore_missing": true } },
+    { "rename": { "field": "Vehicle Type", "target_field": "vehicle_type", "ignore_missing": true } },
+    { "rename": { "field": "Pickup Location", "target_field": "pickup_location", "ignore_missing": true } },
+    { "rename": { "field": "Drop Location", "target_field": "drop_location", "ignore_missing": true } },
+    { "rename": { "field": "Avg VTAT", "target_field": "avg_vtat", "ignore_missing": true } },
+    { "rename": { "field": "Avg CTAT", "target_field": "avg_ctat", "ignore_missing": true } },
+    { "rename": { "field": "Cancelled Rides by Customer", "target_field": "cancelled_by_customer", "ignore_missing": true } },
+    { "rename": { "field": "Reason for cancelling by Customer", "target_field": "customer_cancellation_reason", "ignore_missing": true } },
+    { "rename": { "field": "Cancelled Rides by Driver", "target_field": "cancelled_by_driver", "ignore_missing": true } },
+    { "rename": { "field": "Driver Cancellation Reason", "target_field": "driver_cancellation_reason", "ignore_missing": true } },
+    { "rename": { "field": "Incomplete Rides", "target_field": "incomplete_rides", "ignore_missing": true } },
+    { "rename": { "field": "Incomplete Rides Reason", "target_field": "incomplete_rides_reason", "ignore_missing": true } },
+    { "rename": { "field": "Booking Value", "target_field": "booking_value", "ignore_missing": true } },
+    { "rename": { "field": "Ride Distance", "target_field": "ride_distance", "ignore_missing": true } },
+    { "rename": { "field": "Driver Ratings", "target_field": "driver_ratings", "ignore_missing": true } },
+    { "rename": { "field": "Customer Rating", "target_field": "customer_rating", "ignore_missing": true } },
+    { "rename": { "field": "Payment Method", "target_field": "payment_method", "ignore_missing": true } },
+
+    {
+      "convert": {
+        "field": "avg_vtat",
+        "type": "float",
+        "ignore_missing": true
+      }
+    },
+    {
+      "convert": {
+        "field": "avg_ctat",
+        "type": "float",
+        "ignore_missing": true
+      }
+    },
+    {
+      "convert": {
+        "field": "ride_distance",
+        "type": "float",
+        "ignore_missing": true
+      }
+    },
+    {
+      "convert": {
+        "field": "driver_ratings",
+        "type": "float",
+        "ignore_missing": true
+      }
+    },
+    {
+      "convert": {
+        "field": "customer_rating",
+        "type": "float",
+        "ignore_missing": true
+      }
+    },
+    {
+      "convert": {
+        "field": "booking_value",
+        "type": "integer",
+        "ignore_missing": true
+      }
+    },
+
+    {
+      "script": {
+        "lang": "painless",
+        "source": "if (ctx.containsKey('cancelled_by_customer')) { String val = ctx.cancelled_by_customer; ctx.cancelled_by_customer = (val != null && (val.equals('1') || val.equalsIgnoreCase('true'))); }",
+        "ignore_failure": true
+      }
+    },
+    {
+      "script": {
+        "lang": "painless",
+        "source": "if (ctx.containsKey('cancelled_by_driver')) { String val = ctx.cancelled_by_driver; ctx.cancelled_by_driver = (val != null && (val.equals('1') || val.equalsIgnoreCase('true'))); }",
+        "ignore_failure": true
+      }
+    },
+    {
+      "script": {
+        "lang": "painless",
+        "source": "if (ctx.containsKey('incomplete_rides')) { String val = ctx.incomplete_rides; ctx.incomplete_rides = (val != null && (val.equals('1') || val.equalsIgnoreCase('true'))); }",
+        "ignore_failure": true
+      }
+    }
+  ]
+}

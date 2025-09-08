@@ -1,0 +1,85 @@
+//PUT _index_template/ride-bookings-template
+{
+  "index_patterns": ["ride-bookings*"],
+  "priority": 100,
+  "data_stream": {},
+  "template": {
+    "settings": {
+      "analysis": {
+        "normalizer": {
+          "folding_lower": {
+            "type": "custom",
+            "filter": ["lowercase", "asciifolding"]
+          }
+        },
+        "analyzer": {
+          "place_search": {
+            "type": "custom",
+            "tokenizer": "standard",
+            "filter": ["lowercase", "asciifolding"]
+          },
+          "edge_ngram_analyzer": {
+            "type": "custom",
+            "tokenizer": "edge_ngram_tokenizer",
+            "filter": ["lowercase", "asciifolding"]
+          }
+        },
+        "tokenizer": {
+          "edge_ngram_tokenizer":{
+            "type": "edge_ngram",
+            "min_gram": 2,
+            "max_gram": 20,
+            "token_chars": ["letter", "digit", "whitespace"]
+          }
+        }
+      }
+    },
+    "mappings": {
+      "dynamic": false,
+      "properties": {
+        "@timestamp": { "type": "date"},
+
+        "booking_id": { "type": "keyword", "normalizer": "folding_lower" },
+        "booking_status": { "type": "keyword", "normalizer": "folding_lower" },
+        "customer_id": { "type": "keyword", "normalizer": "folding_lower" },
+
+        "vehicle_type": { "type": "keyword", "normalizer": "folding_lower" },
+        "payment_method": { "type": "keyword", "normalizer": "folding_lower" },
+
+        "pickup_location": {
+          "type": "text",
+          "analyzer": "place_search",
+          "fields": {
+            "raw":  { "type": "keyword", "normalizer": "folding_lower" },
+            "edge": { "type": "text", "analyzer": "edge_ngram_analyzer" }
+          }
+        },
+
+        "drop_location": {
+          "type": "text",
+          "analyzer": "place_search",
+          "fields": {
+            "raw":  { "type": "keyword", "normalizer": "folding_lower" },
+            "edge": { "type": "text", "analyzer": "edge_ngram_analyzer" }
+          }
+        },
+
+        "avg_vtat": { "type": "float" },
+        "avg_ctat": { "type": "float" },
+
+        "cancelled_by_customer": { "type": "boolean" },
+        "customer_cancellation_reason": { "type": "text", "analyzer": "place_search" },
+        "cancelled_by_driver": { "type": "boolean" },
+        "driver_cancellation_reason":   { "type": "text", "analyzer": "place_search" },
+        "incomplete_rides": { "type": "boolean" },
+        "incomplete_rides_reason": { "type": "text", "analyzer": "place_search" },
+
+        "booking_value": { "type": "integer" },
+        "ride_distance": { "type": "double" },
+        "driver_ratings": { "type": "float" },
+        "customer_rating": { "type": "float" }
+
+      }
+    }
+  }
+}
